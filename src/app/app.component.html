@@ -1,0 +1,84 @@
+<div class="contenedor">
+  <h1>Inscripción a Talleres Extracurriculares</h1>
+  <p class="subtitulo">Registra a los alumnos en el taller de su preferencia.</p>
+
+  <!-- Formulario reactivo -->
+  <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+
+    <label for="nombre">Nombre del alumno</label>
+    <input id="nombre" type="text" formControlName="nombre" placeholder="Ej. María Pérez">
+    <small *ngIf="nombre.touched && nombre.hasError('required')">
+      El nombre es obligatorio.
+    </small>
+    <small *ngIf="nombre.touched && nombre.hasError('minlength')">
+      El nombre debe tener mínimo 5 caracteres.
+    </small>
+
+    <label for="codigo">Código de estudiante</label>
+    <input id="codigo" type="text" formControlName="codigo" maxlength="12" placeholder="Ej. AB12CD34">
+    <small *ngIf="codigo.touched && codigo.hasError('required')">
+      El código es obligatorio.
+    </small>
+    <small *ngIf="codigo.touched && codigo.hasError('pattern')">
+      Código inválido: debe tener exactamente 8 caracteres alfanuméricos.
+    </small>
+
+    <label for="taller">Taller</label>
+    <select id="taller" formControlName="taller">
+      <option value="" disabled>Seleccione un taller</option>
+      <option *ngFor="let t of talleres" [value]="t">{{ t }}</option>
+    </select>
+    <small *ngIf="taller.touched && taller.hasError('required')">
+      Debe seleccionar un taller.
+    </small>
+
+    <label for="horario">Horario preferido</label>
+    <select id="horario" formControlName="horario">
+      <option value="" disabled>Seleccione un horario</option>
+      <option *ngFor="let h of horarios" [value]="h">{{ h }}</option>
+    </select>
+    <small *ngIf="horario.touched && horario.hasError('required')">
+      Debe seleccionar un horario.
+    </small>
+
+    <button type="submit" [disabled]="formulario.invalid">
+      Inscribir alumno
+    </button>
+  </form>
+
+  <p class="exito" *ngIf="mensajeExito">{{ mensajeExito }}</p>
+
+  <!-- Tabla dinámica -->
+  <h2>Alumnos inscritos ({{ listaInscripciones.length }})</h2>
+
+  <p class="vacio" *ngIf="listaInscripciones.length === 0">
+    Aún no hay inscripciones registradas.
+  </p>
+
+  <table *ngIf="listaInscripciones.length > 0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Alumno</th>
+        <th>Código</th>
+        <th>Taller</th>
+        <th>Horario</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ins of listaInscripciones; let i = index; trackBy: trackPorId">
+        <td>{{ i + 1 }}</td>
+        <td>{{ ins.nombre }}</td>
+        <td>{{ ins.codigo }}</td>
+        <td>{{ ins.taller }}</td>
+        <td><span [class]="claseBadge(ins.horario)">{{ ins.horario }}</span></td>
+        <td>
+          <button type="button" class="btn-eliminar" (click)="eliminar(ins.id)">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
